@@ -1,26 +1,387 @@
-/*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
- */
+// http://ionicframework.com/docs/theming/
 
-/* Core CSS required for Ionic components to work properly */
-@import "~@ionic/angular/css/core.css";
+@import '~@ionic/angular/css/core.css';
+@import '~@ionic/angular/css/normalize.css';
+@import '~@ionic/angular/css/structure.css';
+@import '~@ionic/angular/css/typography.css';
 
-/* Basic CSS for apps built with Ionic */
-@import "~@ionic/angular/css/normalize.css";
-@import "~@ionic/angular/css/structure.css";
-@import "~@ionic/angular/css/typography.css";
-@import '~@ionic/angular/css/display.css';
+@import '~@ionic/angular/css/padding.css';
+@import '~@ionic/angular/css/float-elements.css';
+@import '~@ionic/angular/css/text-alignment.css';
+@import '~@ionic/angular/css/text-transformation.css';
+@import '~@ionic/angular/css/flex-utils.css';
 
-/* Optional CSS utils that can be commented out */
-@import "~@ionic/angular/css/padding.css";
-@import "~@ionic/angular/css/float-elements.css";
-@import "~@ionic/angular/css/text-alignment.css";
-@import "~@ionic/angular/css/text-transformation.css";
-@import "~@ionic/angular/css/flex-utils.css";
+// Theme files
+@import 'theme/variables.scss';
+
+.toolbar-title,
+.title-ios {
+  letter-spacing: 1px;
+  font-size: var(--font-size-xl);
+}
+
+//ionic 4 overides
+// .searchbar-input {
+//   &.sc-ion-searchbar-md,
+//   &.sc-ion-searchbar-ios {
+//     box-shadow: none;
+//     background: none;
+//     font-size: var(--font-size-m);
+//   }
+// }
+
+.no-padding {
+  --ion-padding: 0px;
+
+  --padding-start: var(--ion-padding);
+  --padding-end: var(--ion-padding);
+  --padding-top: var(--ion-padding);
+  --padding-bottom: var(--ion-padding);
+}
+
+// when there is no search results
+
+.no-result {
+  text-align: center;
+  padding: 20px;
+  background: white;
+  display: flex;
+  justify-content: center;
+}
+
+//when the disabled elements needs to show as not disabled
+
+.disable-visible {
+  opacity: 1 !important;
+}
+.info {
+  color: var(--form-info-color);
+  font-style: italic;
+}
+
+//Summary Page components general css code
+ion-item {
+  &.summary-component {
+    // variable declarations
+    --padding-start: 0px;
+    --inner-padding-end: 0px;
+    --inner-border-width: 0;
+    --min-height: 20px;
+    --border-width: 0;
+    --highlight-background: none;
+
+    ion-grid {
+      padding: 20px 20px 20px 40px;
+
+      .title {
+        color: var(--ion-color-primary);
+        font-size: var(--font-size-sm);
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 20px;
+
+        ion-icon {
+          padding-left: 16px;
+          font-size: var(--font-size-lg);
+
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
+
+      .sub-title {
+        color: var(--ion-color-text-grey);
+        font-size: var(--font-size-sm);
+        margin-bottom: 12px;
+      }
+
+      ion-row {
+        padding-bottom: 20px;
+      }
+
+      ion-col {
+        padding: 0;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        -ms-word-break: break-all;
+        word-break: break-all;
+        word-break: break-word;
+        -ms-hyphens: auto;
+        -moz-hyphens: auto;
+        -webkit-hyphens: auto;
+        hyphens: auto;
+
+        .desc-container {
+          margin-bottom: 16px;
+          color: var(--ion-color-text-grey);
+          display: flex;
+          align-items: center;
+
+          .desc-title {
+            display: inline-flex;
+            font-size: var(--font-size-sm);
+            min-width: 200px;
+            max-width: 200px;
+            padding-right: 16px;
+          }
+
+          .desc {
+            display: inline-flex;
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+          }
+        }
+
+        &.first-child {
+          padding-right: 12px;
+        }
+      }
+
+      data-table,
+      quality-control {
+        > ion-grid {
+          padding: 0;
+
+          .table-header-row {
+            padding: 0;
+            font-weight: 500;
+
+            ion-col {
+              &:first-child {
+                padding-left: 16px !important;
+                max-width: 220px;
+                min-width: 220px;
+              }
+            }
+          }
+
+          .table-body-row {
+            padding-top: 0;
+
+            ion-col {
+              &:first-child {
+                padding-left: 16px !important;
+                font-weight: 500;
+                max-width: 220px;
+                min-width: 220px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    ion-item {
+      &.summary-component {
+        > ion-grid {
+          padding: 0;
+        }
+      }
+    }
+  }
+}
+
+ion-content {
+  height: 65%;
+}
+
+ion-footer,
+page-footer {
+  -webkit-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
+  background-color: white;
+  z-index: 100;
+}
+
+international-phone-number {
+  width: 100%;
+
+  .input-group {
+    position: relative;
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+
+    --padding-top: 10px;
+    --padding-bottom: 10px;
+    padding-left: 0px !important;
+    padding-right: 16px !important;
+
+    border: 1px solid var(--ion-input-color-border);
+    border-radius: 3px;
+
+    font-size: var(--font-size-m);
+
+    height: 42px;
+    max-height: 42px;
+
+    .flagInput {
+      pointer-events: none;
+    }
+
+    .arrow-down {
+      display: none;
+    }
+
+    .input-group-addon {
+      justify-content: center;
+      align-items: center;
+      display: flex;
+    }
+
+    input {
+      position: relative;
+      flex: 1 1 auto;
+      width: 1%;
+      margin-bottom: 0;
+      border: none;
+
+      background-color: var(--ion-background-color);
+    }
+
+    .dropbtn,
+    .dropbtn:hover {
+      background-color: var(--ion-background-color);
+      padding-right: 0px;
+    }
+
+    .dropdown-content {
+      position: fixed;
+
+      margin-top: 12px;
+      margin-left: -8px;
+    }
+  }
+
+  &.modal-input {
+    .input-group {
+      border: none;
+
+      padding-left: 0px !important;
+
+      .flagInput {
+        pointer-events: none;
+      }
+
+      .arrow-down {
+        display: none;
+      }
+    }
+  }
+}
+
+// Loading spinner
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+
+  .spinner {
+    position: relative;
+    width: 54px;
+    height: 54px;
+    display: inline-block;
+    background: var(--ion-background-color);
+    padding: 10px;
+    border-radius: 10px;
+
+    div {
+      width: 3px;
+      height: 18%;
+      background: rgba(0, 0, 0, 0.7);
+      position: absolute;
+      left: 46%;
+      top: 40%;
+      opacity: 0;
+      border-radius: 50px;
+      box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+      animation: fade 1s linear infinite;
+    }
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0.05;
+  }
+}
+
+div.spinner div.bar1 {
+  transform: rotate(0deg) translate(0, -130%);
+  animation-delay: 0s;
+}
+
+div.spinner div.bar2 {
+  transform: rotate(30deg) translate(0, -130%);
+  animation-delay: -0.9167s;
+}
+
+div.spinner div.bar3 {
+  transform: rotate(60deg) translate(0, -130%);
+  animation-delay: -0.833s;
+}
+
+div.spinner div.bar4 {
+  transform: rotate(90deg) translate(0, -130%);
+  animation-delay: -0.7497s;
+}
+
+div.spinner div.bar5 {
+  transform: rotate(120deg) translate(0, -130%);
+  animation-delay: -0.667s;
+}
+
+div.spinner div.bar6 {
+  transform: rotate(150deg) translate(0, -130%);
+  animation-delay: -0.5837s;
+}
+
+div.spinner div.bar7 {
+  transform: rotate(180deg) translate(0, -130%);
+  animation-delay: -0.5s;
+}
+
+div.spinner div.bar8 {
+  transform: rotate(210deg) translate(0, -130%);
+  animation-delay: -0.4167s;
+}
+
+div.spinner div.bar9 {
+  transform: rotate(240deg) translate(0, -130%);
+  animation-delay: -0.333s;
+}
+
+div.spinner div.bar10 {
+  transform: rotate(270deg) translate(0, -130%);
+  animation-delay: -0.2497s;
+}
+
+div.spinner div.bar11 {
+  transform: rotate(300deg) translate(0, -130%);
+  animation-delay: -0.167s;
+}
+
+div.spinner div.bar12 {
+  transform: rotate(330deg) translate(0, -130%);
+  animation-delay: -0.0833s;
+}
+
+.checkbox-icon path {
+  stroke-width: 3;
+}
+
+.pageTitle {
+  font-size: 1.2em !important;
+  font-weight: bold;
+}

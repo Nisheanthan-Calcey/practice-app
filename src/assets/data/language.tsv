@@ -1,0 +1,64 @@
+ LanguageId	LanguageValue
+ok	 OK
+confirmation	 OK, I understand
+next	 Next
+submit	 Submit
+back	 Back
+reset	 Reset
+networkError	 Please connect to a network and try again.
+close	 Close
+closeConfirmation	 You are about to exit the App. Are you sure?
+yes	 Yes
+cancel	 Cancel
+done	 Done
+no	No
+open	Open
+copy	Copy
+delete	Delete
+alert	 ALERT
+save	 Save
+edit	 Edit
+all	 All
+saveAndExit	 Save and Exit
+square	 2
+create	 Create
+preview	 Preview
+completNow	 Complete Now
+completeLater	 Complete Later
+name	 Name
+addNow	 Add Now
+optional	 (Optional)
+Hello World!	 Hello World!
+searchAssets	 Search Assets
+customerName	 Customer Name
+customerNamePlaceholder	 Enter name
+customerEmail	 Customer Email
+customerEmailPlaceholder	 Enter email
+createdDate	 Created Date
+createdDatePlaceholder	 Select Date
+viewAll	 View All
+newRecord	 New record
+searchRecords	 Search records
+recordSavedSuccessfully	 Record saved successfully
+success	 Success
+OK	 OK
+error	 Error
+recordUnsuccessfull	 Record did not save
+record	 Record
+results	 Results
+createCustomer	 Create Record
+customerLookup	 Record Lookup
+addCustomer	 Add Record
+noResults	 No results
+addJson	 Add JSON
+jsonLookup	 JSON Lookup
+clear	 Clear
+reload	 Reload
+emailPDF	 Email PDF
+Attachments:	 Attachments:
+PDF upload is in progress! Please wait.	 PDF upload is in progress! Please wait.
+addHtmlHere	 Add HTML here...
+pdfPageTitleContent	 Here is an example for converting HTML to PDF and emailing it
+PDF upload unsuccessful! Please try again.	 PDF upload unsuccessful! Please try again.
+add Add
+title Title
