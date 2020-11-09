@@ -2,18 +2,25 @@
   <form>
     <ion-grid>
       <ion-row class="header">
-        <ion-col>
-          <ion-icon name="menu-outline"></ion-icon>
+        <ion-col class="menuCol" size="1"> <ion-icon name="menu-outline"></ion-icon> <ion-label>Menu</ion-label></ion-col>
+        <ion-col class="searchCol" size="10">
+          <ion-searchbar (ionChange)="searchToDo($event)"></ion-searchbar>
         </ion-col>
-        <ion-col>
-          <ion-searchbar></ion-searchbar>
+        <ion-col class="addCol" size="1" (click)="navigateAddToDo()">
+          <ion-label>Add</ion-label> <ion-icon name="add-circle"></ion-icon>
         </ion-col>
-        <ion-col> {{regionService.language['add']}}<ion-icon name="add-circle" (click)="presentAddToDoModal()"></ion-icon> </ion-col>
       </ion-row>
 
       <ion-row *ngFor="let todo of todos">
         <ion-col>
-          <ion-label> {{todo.data.title}} </ion-label>
+          <ion-item>
+            <ion-label>{{todo.data.title}}</ion-label>
+            <ion-buttons slot="end" (click)="presentPopover(todo.id)">
+              <ion-button>
+                <ion-icon slot="icon-only" ios="ellipsis-horizontal" md="ellipsis-vertical"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-item>
         </ion-col>
       </ion-row>
     </ion-grid>

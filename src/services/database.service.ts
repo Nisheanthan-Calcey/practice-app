@@ -5,7 +5,7 @@ import { concatMap, mergeMap, last, tap } from 'rxjs/operators';
 
 import * as _ from 'lodash';
 
-import { SQLService, LocalStorageService, MacsJsService } from '@comparenetworks/imsmart-web';
+import { SQLService, LocalStorageService, MacsJsService, SQLType } from '@comparenetworks/imsmart-web';
 
 import { UtilityService } from './utility.service';
 
@@ -104,5 +104,17 @@ export class DatabaseService {
 
   selectRecord(tableName: string, columns: string) {
     return this.sqlService.selectRecords(tableName, columns);
+  }
+
+  updateRecord(tableName: string, fields: any, whereClause: string) {
+    return this.sqlService.updateRecord(tableName, fields, whereClause);
+  }
+
+  deleteRecord(tableName: string, whereClause: string) {
+    return this.sqlService.deleteRecord(tableName, whereClause);
+  }
+
+  runSQL(sql: string, cleanResults?: boolean, prePrepared?: boolean, type?: SQLType) {
+    return this.sqlService.runSQL(sql, cleanResults, prePrepared, type);
   }
 }

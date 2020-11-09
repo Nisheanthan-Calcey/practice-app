@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Router } from '@angular/router';
+
+import { PopoverController } from '@ionic/angular';
 
 import { Observable } from 'rxjs';
 
@@ -7,7 +9,7 @@ import { RegionService } from '@comparenetworks/imsmart-web';
 
 import { DatabaseService } from 'src/services/database.service';
 
-import { AddToDoComponent } from '../modals/add-to-do/add-to-do.modal';
+import { ToDoOptionComponent } from '../components/to-do-options/to-do-option.component';
 
 import { SharedConstants } from 'src/shared/constants/shared-constants';
 
@@ -20,30 +22,82 @@ export class ToDoHomePage implements OnInit {
   todos: any[];
   retrieveData$: Observable<any>;
 
-  constructor(private databaseService: DatabaseService, private modalController: ModalController, public regionService: RegionService) {
+  constructor(
+    private databaseService: DatabaseService,
+    private popoverController: PopoverController,
+    public regionService: RegionService,
+    private router: Router
+  ) {
     this.todos = [];
-
-    setTimeout(() => {
-      this.databaseService.retreiveRecords(SharedConstants.tableStructure.ToDoRecord.tableName).subscribe((records) => {
-        console.log(records, 'records');
-        records.forEach((record: any, index) => {
-          console.log({ id: record.id, data: JSON.parse(record.data) });
-          this.todos[index] = { id: record.id, data: JSON.parse(record.data) };
-        });
-      });
-    }, 200);
   }
 
   ngOnInit() {
     // this.retrieveData$ = this.databaseService.retreiveRecords(SharedConstants.tableStructure.ToDoRecord.tableName);
+    setTimeout(() => {
+      this.retrieveAllToDo();
+    }, 200);
   }
 
-  async presentAddToDoModal() {
-    const modal = await this.modalController.create({
-      component: AddToDoComponent,
-      cssClass: '',
-      backdropDismiss: false,
+  retrieveAllToDo() {
+    this.databaseService.retreiveRecords(SharedConstants.tableStructure.ToDoRecord.tableName).subscribe((records) => {
+      console.log(records, 'records');
+      records.forEach((record: any, index) => {
+        console.log({ id: record.id, data: JSON.parse(record.data) });
+        this.todos[index] = { id: record.id, data: JSON.parse(record.data) };
+      });
     });
-    modal.present();
+  }
+
+  async presentPopover(toDoId: any) {
+    const popover = await this.popoverController.create({
+      component: ToDoOptionComponent,
+      cssClass: 'to-do-option-class',
+      translucent: true,
+    });
+    popover.present();
+
+    return popover.onDidDismiss().then((dismissAction: any) => {
+      console.log(toDoId);
+      switch (dismissAction.data) {
+        case 'edit':
+          this.router.navigate(['/edit'], { queryParams: { id: toDoId } });
+          break;
+        case 'delete':
+          this.deleteToDo(+toDoId);
+          break;
+      }
+    });
+  }
+
+  searchToDo(ev: any) {
+    if (ev.detail.value) {
+      this.todos = [];
+      this.databaseService
+        .searchRecord(SharedConstants.tableStructure.ToDoRecord.tableName, `data LIKE '%${ev.detail.value}%'`)
+        .subscribe((records) => {
+          console.log(records, 'records');
+          records.forEach((record: any, index) => {
+            console.log({ id: record.id, data: JSON.parse(record.data) });
+            this.todos[index] = { id: record.id, data: JSON.parse(record.data) };
+          });
+        });
+    } else {
+      this.retrieveAllToDo();
+    }
+  }
+
+  navigateAddToDo() {
+    this.router.navigate(['/add']);
+  }
+
+  deleteToDo(id: number) {
+    this.databaseService.deleteRecord(SharedConstants.tableStructure.ToDoRecord.tableName, `id == ${id}`).subscribe(
+      () => {
+        console.log('Successfully deleted id: ', id);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 }

@@ -1,23 +1,26 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+
 import { RegionService } from '@comparenetworks/imsmart-web';
-import { ModalController } from '@ionic/angular';
+
 import { DatabaseService } from 'src/services/database.service';
+
 import { SharedConstants } from 'src/shared/constants/shared-constants';
 
 @Component({
   selector: 'add-to-do',
-  templateUrl: 'add-to-do.modal.html',
-  styleUrls: ['add-to-do.modal.scss'],
+  templateUrl: 'add-to-do.page.html',
+  styleUrls: ['add-to-do.page.scss'],
 })
-export class AddToDoComponent {
+export class AddToDoPage {
   addToDoForm: FormGroup;
 
   constructor(
-    private modalController: ModalController,
     public regionService: RegionService,
     private formBuilder: FormBuilder,
-    private databaseService: DatabaseService
+    private databaseService: DatabaseService,
+    private router: Router
   ) {
     this.addToDoForm = this.formBuilder.group({
       title: ['', Validators.required],
@@ -25,24 +28,21 @@ export class AddToDoComponent {
     });
   }
 
-  addJson() {
-    const records = {
+  addToDo() {
+    const newRecord = {
       title: this.addToDoForm.controls.title.value,
       createdDate: this.addToDoForm.controls.createdDate.value,
     };
+    console.log();
 
     this.databaseService
       .insertRecords(SharedConstants.tableStructure.ToDoRecord.tableName, {
-        data: records,
+        data: newRecord,
         id: new Date().getTime(),
       })
       .subscribe(
         () => {
-          this.addToDoForm.reset({
-            title: '',
-            createdDate: new Date().toISOString(),
-          });
-          this.dismiss();
+          this.navigateHome();
         },
         () => {
           console.log('Error');
@@ -50,9 +50,11 @@ export class AddToDoComponent {
       );
   }
 
-  dismiss() {
-    this.modalController.dismiss({
-      dismissed: true,
+  navigateHome() {
+    this.addToDoForm.reset({
+      title: '',
+      createdDate: new Date().toISOString(),
     });
+    this.router.navigate(['']);
   }
 }

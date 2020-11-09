@@ -1,0 +1,29 @@
+<ion-content>
+  <form [formGroup]="addToDoForm" class="form-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>Add New To-Do</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="stacked"> Title* </ion-label>
+          <ion-input placeholder="{{ regionService.language['titlePlaceholder']}}" formControlName="title"> </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"> {{ regionService.language['createdDate']}} </ion-label>
+          <ion-datetime
+            displayFormat="MMMM D, YYYY"
+            placeholder="{{ regionService.language['createdDatePlaceholder']}}"
+            formControlName="createdDate"
+          >
+          </ion-datetime>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-button (click)="navigateHome()"> Cancel </ion-button>
+          <ion-button (click)="addToDo()" [disabled]="!addToDoForm.valid"> Add </ion-button>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+  </form>
+</ion-content>
