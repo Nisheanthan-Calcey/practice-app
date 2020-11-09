@@ -33,7 +33,6 @@ export class AddToDoPage {
       title: this.addToDoForm.controls.title.value,
       createdDate: this.addToDoForm.controls.createdDate.value,
     };
-    console.log();
 
     this.databaseService
       .insertRecords(SharedConstants.tableStructure.ToDoRecord.tableName, {

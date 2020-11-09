@@ -73,7 +73,7 @@ export class DatabaseService {
         last(),
         tap(() => {
           this.dummyRecords.forEach((dummy) => {
-            this.insertRecords('ToDoRecord', dummy);
+            this.insertRecords(SharedConstants.tableStructure.ToDoRecord.tableName, dummy);
           });
           this.localStorageService.set(SharedString.initializedDatabaseStructure, true);
         })
