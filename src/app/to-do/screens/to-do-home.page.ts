@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { PopoverController } from '@ionic/angular';
 
+import { Observable, Subscription } from 'rxjs';
 import { concatMap, tap } from 'rxjs/operators';
 
 import { RegionService } from '@comparenetworks/imsmart-web';
@@ -18,9 +19,9 @@ import { SharedConstants } from 'src/shared/constants/shared-constants';
   templateUrl: 'to-do-home.page.html',
   styleUrls: ['to-do-home.page.scss'],
 })
-export class ToDoHomePage {
+export class ToDoHomePage implements OnDestroy {
   todos: any[];
-
+  subscription: Subscription;
   constructor(
     private databaseService: DatabaseService,
     private popoverController: PopoverController,
@@ -32,13 +33,14 @@ export class ToDoHomePage {
 
   ionViewWillEnter() {
     setTimeout(() => {
-      this.databaseService.retreiveRecords(SharedConstants.tableStructure.ToDoRecord.tableName).subscribe((records) => {
-        console.log(records, 'records');
-        records.forEach((record: any, index) => {
-          console.log({ id: record.id, data: JSON.parse(record.data) });
-          this.todos[index] = { id: record.id, data: JSON.parse(record.data) };
-        });
-      });
+      this.subscriber(this.databaseService.retreiveRecords(SharedConstants.tableStructure.ToDoRecord.tableName));
+      // .subscribe((records) => {
+      //   console.log(records, 'records');
+      //   records.forEach((record: any, index) => {
+      //     console.log({ id: record.id, data: JSON.parse(record.data) });
+      //     this.todos[index] = { id: record.id, data: JSON.parse(record.data) };
+      //   });
+      // });
     }, 200);
   }
 
@@ -65,15 +67,17 @@ export class ToDoHomePage {
 
   searchToDo(ev: any) {
     this.todos = [];
-    const obs$ = ev.detail.value
-      ? this.databaseService.searchRecord(SharedConstants.tableStructure.ToDoRecord.tableName, `data LIKE '%${ev.detail.value}%'`)
-      : this.databaseService.retreiveRecords(SharedConstants.tableStructure.ToDoRecord.tableName);
-
-    obs$.subscribe((records) => {
-      records.forEach((record: any, index) => {
-        this.todos[index] = { id: record.id, data: JSON.parse(record.data) };
-      });
-    });
+    // const obs$ = ;
+    this.subscriber(
+      ev.detail.value
+        ? this.databaseService.searchRecord(SharedConstants.tableStructure.ToDoRecord.tableName, `data LIKE '%${ev.detail.value}%'`)
+        : this.databaseService.retreiveRecords(SharedConstants.tableStructure.ToDoRecord.tableName)
+    );
+    // obs$.subscribe((records) => {
+    //   records.forEach((record: any, index) => {
+    //     this.todos[index] = { id: record.id, data: JSON.parse(record.data) };
+    //   });
+    // });
   }
 
   navigateAddToDo() {
@@ -81,16 +85,29 @@ export class ToDoHomePage {
   }
 
   deleteToDo(id: number) {
-    this.databaseService
-      .deleteRecord(SharedConstants.tableStructure.ToDoRecord.tableName, `id == ${id}`)
-      .pipe(
+    this.subscriber(
+      this.databaseService.deleteRecord(SharedConstants.tableStructure.ToDoRecord.tableName, `id == ${id}`).pipe(
         concatMap(() => this.databaseService.retreiveRecords(SharedConstants.tableStructure.ToDoRecord.tableName)),
         tap(() => (this.todos = []))
       )
-      .subscribe((records) => {
-        records.forEach((record: any, index) => {
-          this.todos[index] = { id: record.id, data: JSON.parse(record.data) };
-        });
+    );
+    // .subscribe((records) => {
+    //   records.forEach((record: any, index) => {
+    //     this.todos[index] = { id: record.id, data: JSON.parse(record.data) };
+    //   });
+    // });
+  }
+
+  subscriber(observable: Observable<any>) {
+    // this page handles same way of subscription which assign value for this.todos, so using this method to prevent the code redundancy
+    this.subscription = observable.subscribe((records) => {
+      records.forEach((record: any, index) => {
+        this.todos[index] = { id: record.id, data: JSON.parse(record.data) };
       });
+    });
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }

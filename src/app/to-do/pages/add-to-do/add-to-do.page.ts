@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { RegionService } from '@comparenetworks/imsmart-web';
+import { take } from 'rxjs/operators';
 
 import { DatabaseService } from 'src/services/database.service';
 
@@ -39,6 +40,7 @@ export class AddToDoPage {
         data: newRecord,
         id: new Date().getTime(),
       })
+      .pipe(take(1))
       .subscribe(
         () => {
           this.navigateHome();

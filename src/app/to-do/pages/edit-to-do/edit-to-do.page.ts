@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { RegionService } from '@comparenetworks/imsmart-web';
+import { Subscription } from 'rxjs';
 
 import { DatabaseService } from 'src/services/database.service';
 
@@ -13,9 +14,11 @@ import { SharedConstants } from 'src/shared/constants/shared-constants';
   templateUrl: 'edit-to-do.page.html',
   styleUrls: ['edit-to-do.page.scss'],
 })
-export class EditToDoPage implements OnInit {
+export class EditToDoPage implements OnInit, OnDestroy {
   editToDoForm: FormGroup;
   id: number;
+  queryParamSubscription$: Subscription;
+  searchRecordSubscription$: Subscription;
 
   constructor(
     public regionService: RegionService,
@@ -29,21 +32,23 @@ export class EditToDoPage implements OnInit {
       createdDate: [new Date().toISOString()],
     });
 
-    this.route.queryParams.subscribe((data) => {
+    this.queryParamSubscription$ = this.route.queryParams.subscribe((data) => {
       this.id = +data.id;
     });
   }
 
   ngOnInit() {
     if (this.id) {
-      this.databaseService.searchRecord(SharedConstants.tableStructure.ToDoRecord.tableName, `id == ${this.id}`).subscribe((record) => {
-        if (record && record[0]) {
-          console.log(JSON.parse(record[0].data));
-          const selectedRecord = JSON.parse(record[0].data);
-          this.editToDoForm.controls.title.setValue(selectedRecord.title);
-          this.editToDoForm.controls.createdDate.setValue(selectedRecord.createdDate);
-        }
-      });
+      this.searchRecordSubscription$ = this.databaseService
+        .searchRecord(SharedConstants.tableStructure.ToDoRecord.tableName, `id == ${this.id}`)
+        .subscribe((record) => {
+          if (record && record[0]) {
+            console.log(JSON.parse(record[0].data));
+            const selectedRecord = JSON.parse(record[0].data);
+            this.editToDoForm.controls.title.setValue(selectedRecord.title);
+            this.editToDoForm.controls.createdDate.setValue(selectedRecord.createdDate);
+          }
+        });
     }
   }
 
@@ -68,5 +73,11 @@ export class EditToDoPage implements OnInit {
       createdDate: new Date().toISOString(),
     });
     this.router.navigate(['']);
+  }
+
+  ngOnDestroy() {
+    console.log('on destroy');
+    this.queryParamSubscription$.unsubscribe();
+    this.searchRecordSubscription$.unsubscribe();
   }
 }
