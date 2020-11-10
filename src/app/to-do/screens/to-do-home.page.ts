@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { PopoverController } from '@ionic/angular';
 
-import { Observable } from 'rxjs';
+import { concatMap, tap } from 'rxjs/operators';
 
 import { RegionService } from '@comparenetworks/imsmart-web';
 
@@ -18,9 +18,8 @@ import { SharedConstants } from 'src/shared/constants/shared-constants';
   templateUrl: 'to-do-home.page.html',
   styleUrls: ['to-do-home.page.scss'],
 })
-export class ToDoHomePage implements OnInit {
+export class ToDoHomePage {
   todos: any[];
-  retrieveData$: Observable<any>;
 
   constructor(
     private databaseService: DatabaseService,
@@ -31,21 +30,16 @@ export class ToDoHomePage implements OnInit {
     this.todos = [];
   }
 
-  ngOnInit() {
-    // this.retrieveData$ = this.databaseService.retreiveRecords(SharedConstants.tableStructure.ToDoRecord.tableName);
+  ionViewWillEnter() {
     setTimeout(() => {
-      this.retrieveAllToDo();
-    }, 200);
-  }
-
-  retrieveAllToDo() {
-    this.databaseService.retreiveRecords(SharedConstants.tableStructure.ToDoRecord.tableName).subscribe((records) => {
-      console.log(records, 'records');
-      records.forEach((record: any, index) => {
-        console.log({ id: record.id, data: JSON.parse(record.data) });
-        this.todos[index] = { id: record.id, data: JSON.parse(record.data) };
+      this.databaseService.retreiveRecords(SharedConstants.tableStructure.ToDoRecord.tableName).subscribe((records) => {
+        console.log(records, 'records');
+        records.forEach((record: any, index) => {
+          console.log({ id: record.id, data: JSON.parse(record.data) });
+          this.todos[index] = { id: record.id, data: JSON.parse(record.data) };
+        });
       });
-    });
+    }, 200);
   }
 
   async presentPopover(toDoId: any) {
@@ -70,20 +64,16 @@ export class ToDoHomePage implements OnInit {
   }
 
   searchToDo(ev: any) {
-    if (ev.detail.value) {
-      this.todos = [];
-      this.databaseService
-        .searchRecord(SharedConstants.tableStructure.ToDoRecord.tableName, `data LIKE '%${ev.detail.value}%'`)
-        .subscribe((records) => {
-          console.log(records, 'records');
-          records.forEach((record: any, index) => {
-            console.log({ id: record.id, data: JSON.parse(record.data) });
-            this.todos[index] = { id: record.id, data: JSON.parse(record.data) };
-          });
-        });
-    } else {
-      this.retrieveAllToDo();
-    }
+    this.todos = [];
+    const obs$ = ev.detail.value
+      ? this.databaseService.searchRecord(SharedConstants.tableStructure.ToDoRecord.tableName, `data LIKE '%${ev.detail.value}%'`)
+      : this.databaseService.retreiveRecords(SharedConstants.tableStructure.ToDoRecord.tableName);
+
+    obs$.subscribe((records) => {
+      records.forEach((record: any, index) => {
+        this.todos[index] = { id: record.id, data: JSON.parse(record.data) };
+      });
+    });
   }
 
   navigateAddToDo() {
@@ -91,13 +81,16 @@ export class ToDoHomePage implements OnInit {
   }
 
   deleteToDo(id: number) {
-    this.databaseService.deleteRecord(SharedConstants.tableStructure.ToDoRecord.tableName, `id == ${id}`).subscribe(
-      () => {
-        console.log('Successfully deleted id: ', id);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    this.databaseService
+      .deleteRecord(SharedConstants.tableStructure.ToDoRecord.tableName, `id == ${id}`)
+      .pipe(
+        concatMap(() => this.databaseService.retreiveRecords(SharedConstants.tableStructure.ToDoRecord.tableName)),
+        tap(() => (this.todos = []))
+      )
+      .subscribe((records) => {
+        records.forEach((record: any, index) => {
+          this.todos[index] = { id: record.id, data: JSON.parse(record.data) };
+        });
+      });
   }
 }
